@@ -2,6 +2,12 @@
 
 ## About
 
+This is spigot plugin that make it easy to manage scoreboard.
+
+## Installation
+
+ggrks
+
 ## Spaces
 
 Minecraft's command does not accept spaces.  

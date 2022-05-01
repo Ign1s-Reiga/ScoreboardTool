@@ -3,7 +3,9 @@ package jp.fukumai.scoreboardtool;
 import jp.fukumai.scoreboardtool.util.CommandManager;
 import jp.fukumai.scoreboardtool.util.Config;
 import jp.fukumai.scoreboardtool.util.Variables;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -25,12 +27,15 @@ public final class ScoreboardTool extends JavaPlugin implements Listener {
     public Map<String, Integer> items = new HashMap<>();
     public String displayName;
     public long updateInterval;
+    public String escapeSequence;
 
     @Override
     public void onEnable() {
         Config config = new Config(this);
         config.reloadConfig();
         this.updateInterval = config.config.getLong("updateInterval");
+        this.escapeSequence = config.config.getString("escapeSequence");
+
         this.setting = new ScoreboardSetting(this);
         try {
             setting.loadScoreboardSetting();
@@ -93,12 +98,13 @@ public final class ScoreboardTool extends JavaPlugin implements Listener {
             Scoreboard sb = getServer().getScoreboardManager().getNewScoreboard();
             list.forEach(sb::resetScores);
 
-            p.sender.sendMessage(MESSAGE_PREFIX + "Reseted Sidebar scores.");
+            p.sender.sendMessage(MESSAGE_PREFIX + "Reset Sidebar scores.");
             return true;
         });
         cm.addSubCommand(new String[]{"reload"}, p -> {
             try {
                 this.setting.reloadScoreboardSetting();
+                Bukkit.getOnlinePlayers().forEach(pl -> items.forEach((k, v) -> registerScore(k, v, pl)));
                 p.sender.sendMessage(MESSAGE_PREFIX + "Reloaded Sidebar setting.");
                 return true;
             } catch (IOException e) {
@@ -107,6 +113,10 @@ public final class ScoreboardTool extends JavaPlugin implements Listener {
             p.sender.sendMessage(MESSAGE_PREFIX + "Failed to reload Sidebar setting.");
             return false;
         });
+
+        PlayerObserver observer = new PlayerObserver(this);
+        observer.runTaskTimer(this, 0L, 1L);
+        getServer().getPluginManager().registerEvents(observer, this);
     }
 
     @Override
@@ -120,7 +130,8 @@ public final class ScoreboardTool extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-
+        if (!items.isEmpty())
+            items.forEach((k, v) -> registerScore(k, v, e.getPlayer()));
     }
 
     private int getMinScore() {
@@ -138,12 +149,20 @@ public final class ScoreboardTool extends JavaPlugin implements Listener {
                 .orElse(null);
     }
 
-    private void registerScore(String entry, int score) {
-        entry.replace("/s", " ");
-
+    private void registerScore(String entry, int score, Player player) {
+        entry.replace(this.escapeSequence, " ");
+        Objective obj = getServer().getScoreboardManager().getMainScoreboard().getObjective("sbt");
+        if (containsVariables(entry))
+            replaceEntryAndRegister(entry, score, player, obj);
+        else
+            obj.getScore(entry).setScore(score);
     }
 
     private boolean containsVariables(String entry) {
         return Arrays.stream(Variables.values()).anyMatch(v -> entry.contains(v.variable));
+    }
+
+    private void replaceEntryAndRegister(String entry, int score, Player player, Objective objective) {
+
     }
 }

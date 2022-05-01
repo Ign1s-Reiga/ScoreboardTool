@@ -1,3 +1,4 @@
 updateInterval: 5
 serverName: "The Minecraft Server"
 serverAddress: "samplemcserver.net"
+escapeSequence: "/s"

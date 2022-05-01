@@ -2,7 +2,6 @@ package jp.fukumai.scoreboardtool;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import org.bukkit.scoreboard.Objective;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,8 +29,7 @@ public class ScoreboardSetting {
         this.plugin.displayName = obj.displayName;
         this.plugin.items.putAll(obj.items);
 
-        Objective objective = this.plugin.getServer().getScoreboardManager().getNewScoreboard().registerNewObjective("sbt", "", obj.displayName);
-        obj.items.forEach((k, v) -> objective.getScore(k).setScore(v));
+        this.plugin.getServer().getScoreboardManager().getNewScoreboard().registerNewObjective("sbt", "", obj.displayName);
     }
 
     public void saveScoreboardSetting() throws IOException {
