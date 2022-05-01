@@ -34,7 +34,7 @@ The following is developing now. cannot be used.
 %player_direction% : player's facing direction  
 %player_ping% : player's ping  
 
-%server_address% : server address. configurable from config.yml
+%server_address% : server address. configurable from config.yml  
 %server_name% : server name configurable from config.yml
 
 %date% : Real Date  
