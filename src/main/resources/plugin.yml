@@ -1,0 +1,16 @@
+name: ScoreBoardTool
+version: '${project.version}'
+main: jp.fukumai.scoreboardtool.ScoreboardTool
+api-version: 1.18
+load: STARTUP
+authors: [ Reiga ]
+
+commands:
+  scoreboardtool:
+    aliases:
+      - "sbt"
+    description: "Command for Using ScoreboardTool"
+    usage: "/sbt <subcommands>"
+  userinteract:
+    description: "User Interact"
+    usage: "/userinteract ..."
