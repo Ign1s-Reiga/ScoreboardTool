@@ -1,4 +1,4 @@
-# ScoreBoardTool
+# ScoreboardTool
 
 ## About
 

@@ -1,4 +1,4 @@
-name: ScoreBoardTool
+name: ScoreboardTool
 version: '${project.version}'
 main: jp.fukumai.scoreboardtool.ScoreboardTool
 api-version: 1.18
